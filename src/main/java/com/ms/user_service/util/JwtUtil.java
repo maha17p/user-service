@@ -4,8 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
@@ -20,7 +22,7 @@ public class JwtUtil {
     @Value("${jwt.refresh-token-expiration}")
     private long refreshExpiration;
 
-    private Key getKey(){
+    private SecretKey getKey(){
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
     public String generateAccessToken(String username){
@@ -36,7 +38,23 @@ public class JwtUtil {
         return "refresh token";
     }
 
-    public Claims extractClaims(String username){
+    private Claims extractClaims(String token){
+        return Jwts.parser()
+                .verifyWith(this.getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 
+    public String extractUsername(String token){
+        return this.extractClaims(token).getSubject();
+    }
+
+    public boolean isTokenExipred(String token){
+        return this.extractClaims(token).getExpiration().before(new Date());
+    }
+
+    public boolean validateToken(String username, UserDetails userDetails,String token){
+        return username.equals(userDetails.getUsername()) && !this.isTokenExipred((token));
     }
 }
