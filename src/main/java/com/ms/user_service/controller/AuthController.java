@@ -2,6 +2,7 @@ package com.ms.user_service.controller;
 
 import com.ms.user_service.dto.request.LoginReqeust;
 import com.ms.user_service.dto.request.RegisterRequest;
+import com.ms.user_service.service.AuthService;
 import com.ms.user_service.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,9 +18,11 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final AuthService authService;
 
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request){
+        String response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Created successfully");
     }
 
