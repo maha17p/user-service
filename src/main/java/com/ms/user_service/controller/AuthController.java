@@ -4,6 +4,7 @@ import com.ms.user_service.dto.request.LoginReqeust;
 import com.ms.user_service.dto.request.RegisterRequest;
 import com.ms.user_service.service.AuthService;
 import com.ms.user_service.util.JwtUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final AuthService authService;
 
-    @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request){
+    @PostMapping("/register")
+    public ResponseEntity<String> register( @Valid @RequestBody RegisterRequest request){
         String response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Created successfully");
     }

@@ -34,6 +34,7 @@ public class GlobalException {
         return error(HttpStatus.UNAUTHORIZED, "Unauthorized", ex.getMessage());
     }
 
+
     //Helper
     private ResponseEntity<ErrorResponse> error(HttpStatus status, String error, String message) {
         return ResponseEntity.status(status).body(
